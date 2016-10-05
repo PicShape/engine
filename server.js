@@ -1,22 +1,29 @@
 // server.js
 
 var express = require('express');
+var expressValidator = require('express-validator');
+
 var app = express();
 
 var bodyParser = require('body-parser');
-
 var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
 
 // Controllers for routing
-var psController = require('./controllers/picshape');
+var picshapeController = require('./controllers/picshape');
+var galleryController = require('./controllers/gallery');
 
+
+// Configure storage engine
+
+var upload = multer({ dest: 'uploads/' })
 
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(expressValidator());
+
 
 var port = process.env.PORT || 8080;        // set our port
 
@@ -25,7 +32,9 @@ var port = process.env.PORT || 8080;        // set our port
 var router = express.Router();              // get an instance of the express Router
 
 
-router.get('/', psController.welcome);
+router.get('/', picshapeController.welcome);
+router.get('/convert', picshapeController.convert);
+router.post('/photos/upload', upload.single('photo'), galleryController.handleFileUpload);
 
 
 // REGISTER OUR ROUTES -------------------------------

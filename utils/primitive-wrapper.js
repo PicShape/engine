@@ -2,17 +2,21 @@
 const spawn = require('child_process').spawn;
 
 
-const args = ['-i uploads/input.jpg', '-o uploads/output.jpg', '-n 100', '-m 0'];
-const primitive = spawn('primitive', args);
 
-primitive.stdout.on('data', (data) => {
-  console.log(`stdout: ${data}`);
-});
+exports.primitive = function(callback){
+  const args = ['-i uploads/input.jpg', '-o uploads/output.jpg', '-n 100', '-m 0'];
+  const primitiveproc = spawn('primitive', args);
 
-primitive.stderr.on('data', (data) => {
-  console.log(`stderr: ${data}`);
-});
+  primitiveproc.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
 
-primitive.on('close', (code) => {
-  console.log(`child process exited with code ${code}`);
-});
+  primitiveproc.stderr.on('data', (data) => {
+    console.log(`stderr: ${data}`);
+  });
+
+  primitiveproc.on('close', (code, callback) => {
+    console.log(`child process exited with code ${code}`);
+    callback(code);
+  });
+};
