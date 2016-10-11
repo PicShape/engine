@@ -1,5 +1,5 @@
 // server.js
-
+var mime = require('mime');
 var express = require('express');
 var expressValidator = require('express-validator');
 
@@ -19,7 +19,7 @@ var storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now())
+    cb(null, file.fieldname + '.' + mime.extension(file.mimetype))
   }
 })
 
@@ -42,7 +42,9 @@ var router = express.Router();              // get an instance of the express Ro
 
 router.get('/', picshapeController.welcome);
 router.get('/convert', picshapeController.convert);
-router.post('/photos/upload', upload.single('photo'), galleryController.handleFileUpload);
+router.post('/photos/upload', upload.single('photo'), (req,res) => {
+  galleryController.handleFileUpload(req, res, picshapeController.convert);
+});
 
 
 // REGISTER OUR ROUTES -------------------------------

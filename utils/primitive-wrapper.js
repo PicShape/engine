@@ -1,11 +1,9 @@
 
 const spawn = require('child_process').spawn;
 
-
-
-exports.primitive = function(callback){
-  const args = ['-i uploads/input.jpg', '-o uploads/output.jpg', '-n 100', '-m 0'];
-  const primitiveproc = spawn('primitive', args);
+exports.primitive = function(inputPath, outputPath, config, callback){
+  const args = ['-i', inputPath, '-o', outputPath, '-n', config.iter, '-m', config.mode];
+  const primitiveproc = spawn('/usr/local/Cellar/go/1.7.1/libexec/bin/primitive', args);
 
   primitiveproc.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -15,8 +13,8 @@ exports.primitive = function(callback){
     console.log(`stderr: ${data}`);
   });
 
-  primitiveproc.on('close', (code, callback) => {
+  primitiveproc.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    callback(code);
+    callback(outputPath);
   });
 };
