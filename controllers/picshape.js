@@ -4,10 +4,16 @@ var mime = require('mime');
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 
 
+exports.middlewareFileUpload = function(req, res, next) {
+  if(req.file) {
+    console.log('File uploaded');
+    console.log(req.file);
+  } else {
+    console.log('No file.');
+  }
+  next();
+}
 
-exports.welcome = function(req, res) {
-    res.json({ message: 'Welcome to PicShape API!' });
-};
 
 
 exports.convert = function(req, res){
