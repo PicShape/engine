@@ -17,6 +17,14 @@ exports.middlewareFileUpload = function(req, res, next) {
 
 
 exports.convert = function(req, res){
+  req.checkQuery('file', 'Invalid file').notEmpty();
+
+  var errors = req.validationErrors();
+  if (errors) {
+    res.send('There have been validation errors: ' + errors, 400);
+    return;
+  }
+
   console.log("Convert called.");
   let file = req.file;
   let inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);

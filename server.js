@@ -6,7 +6,6 @@ var expressValidator = require('express-validator');
 var app = express();
 
 var bodyParser = require('body-parser');
-var multer  = require('multer')
 
 // Controllers for routing
 var picshapeController = require('./controllers/picshape');
@@ -14,17 +13,6 @@ var galleryController = require('./controllers/gallery');
 
 
 
-// Configure storage engine
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '.' + mime.extension(file.mimetype))
-  }
-})
-
-var upload = multer({ storage: storage })
 
 
 // configure app to use bodyParser()
