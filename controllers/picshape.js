@@ -17,11 +17,14 @@ exports.middlewareFileUpload = function(req, res, next) {
 
 
 exports.convert = function(req, res){
-  req.checkQuery('file', 'Invalid file').notEmpty();
+  if(req.file == undefined) {
+    res.status(400).send('You need to provide an input picture.');
+    return;
+  }
 
   var errors = req.validationErrors();
   if (errors) {
-    res.send('There have been validation errors: ' + errors, 400);
+    res.status(400).send('There have been validation errors: ' + errors);
     return;
   }
 
