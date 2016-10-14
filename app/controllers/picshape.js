@@ -40,7 +40,7 @@ exports.convert = function(req, res){
               mode: 0,
             },
             (out) => {
-                res.json({ message: 'Uploaded and converted ! ' + out});
+                res.json({ message: 'Conversion done successfully.', url: outputPath});
             }
           );
 };
