@@ -12,13 +12,26 @@ chai.use(chaiHttp);
 /*
   * Test the /GET route
   */
-describe('/GET picshape', () => {
-    it('it should GET a welcome message', (done) => {
+describe('/GET picshape/convert', () => {
+    it('it should fail on GET', (done) => {
       chai.request(server)
-          .get('/api/picshape')
+          .get('/api/picshape/convert')
           .end((err, res) => {
-              res.should.have.status(200);
-              res.body.should.equals('Welcome to PicShape sub-API !');
+              res.should.have.status(404);
+            done();
+          });
+    });
+});
+
+/*
+  * Test the /POST route
+  */
+describe('/POST picshape/convert', () => {
+    it('it should fail when not providing image', (done) => {
+      chai.request(server)
+          .post('/api/picshape/convert')
+          .end((err, res) => {
+              res.should.have.status(400);
             done();
           });
     });
