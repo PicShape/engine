@@ -21,8 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
 
-
-var port = process.env.PORT || 8080;        // set our port
+app.set('port', (process.env.PORT || 8080)); // Set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -39,5 +38,6 @@ app.use('/api',router);
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log('Server listening on port ' + port);
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
