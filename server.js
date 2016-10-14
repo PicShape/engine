@@ -8,8 +8,8 @@ var app = express();
 var bodyParser = require('body-parser');
 
 // Controllers for routing
-var picshapeController = require('./controllers/picshape');
-var galleryController = require('./controllers/gallery');
+var picshapeController = require('./app/controllers/picshape');
+var galleryController = require('./app/controllers/gallery');
 
 
 
@@ -31,8 +31,8 @@ var router = express.Router(); // get an instance of the express Router
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-router.use('/gallery', require('./routes/gallery'));
-router.use('/picshape', require('./routes/picshape'));
+router.use('/gallery', require('./app/routes/gallery'));
+router.use('/picshape', require('./app/routes/picshape'));
 
 app.use('/api',router);
 
@@ -41,3 +41,7 @@ app.use('/api',router);
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
+
+
+
+module.exports = app; // for testing
