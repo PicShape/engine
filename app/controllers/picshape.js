@@ -29,9 +29,9 @@ exports.convert = function(req, res){
   }
 
   console.log("Convert called.");
-  let file = req.file;
-  let inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);
-  let outputPath = __dirname + '/../uploads/converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
+  var file = req.file;
+  var inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);
+  var outputPath = __dirname + '/../uploads/converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
 
   primitive(inputPath,
             outputPath,
