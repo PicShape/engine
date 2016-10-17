@@ -14,10 +14,6 @@ exports.middlewareFileUpload = function(req, res, next) {
 exports.convert = function(req, res){
   var uploadDir = __dirname + '/../uploads/';
 
-  if (!fs.existsSync(uploadDir)){
-      fs.mkdirSync(uploadDir);
-  }
-
   if(req.file == undefined) {
     res.status(400).send('You need to provide an input picture.');
     return;

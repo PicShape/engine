@@ -1,6 +1,7 @@
 var express = require('express');
 var multer  = require('multer')
 var mime = require('mime');
+var fs = require('fs');
 
 var picshapeController = require('../controllers/picshape');
 
@@ -9,11 +10,17 @@ var picshapeController = require('../controllers/picshape');
 // Configure storage engine
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log();
-    cb(null, __dirname + '/../uploads/')
+    var uploadDir = __dirname + '/../uploads/';
+
+    if (!fs.existsSync(uploadDir)){
+        console.log('Creating',uploadDir);
+        fs.mkdirSync(uploadDir);
+    }
+
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '.' + mime.extension(file.mimetype))
+    cb(null, file.fieldname + '.' + mime.extension(file.mimetype));
   }
 })
 
