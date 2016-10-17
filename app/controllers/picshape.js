@@ -6,12 +6,6 @@ var primitive = require('../utils/primitive-wrapper.js').primitive;
 
 
 exports.middlewareFileUpload = function(req, res, next) {
-  if(req.file) {
-    console.log('File uploaded');
-    console.log(req.file);
-  } else {
-    console.log('No file.');
-  }
   next();
 }
 
@@ -19,6 +13,10 @@ exports.middlewareFileUpload = function(req, res, next) {
 
 exports.convert = function(req, res){
   var uploadDir = __dirname + '/../uploads/';
+
+  if (!fs.existsSync(uploadDir)){
+      fs.mkdirSync(uploadDir);
+  }
 
   if(req.file == undefined) {
     res.status(400).send('You need to provide an input picture.');
@@ -32,9 +30,7 @@ exports.convert = function(req, res){
   }
 
 
-  if (!fs.existsSync(uploadDir)){
-      fs.mkdirSync(uploadDir);
-  }
+
 
   console.log("Convert called.");
   var file = req.file;
