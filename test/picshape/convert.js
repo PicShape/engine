@@ -28,7 +28,7 @@ describe('/GET picshape/convert', () => {
   * Test the /POST route
   */
 describe('/POST picshape/convert', function(){
-    this.timeout(15000);
+    this.timeout(20000);
 
     it('it should fail when not providing image', (done) => {
       chai.request(server)
@@ -39,8 +39,8 @@ describe('/POST picshape/convert', function(){
           });
     });
 
-    it('it should success when providing image within 15s', (done) => {
-      setTimeout(done, 15000);
+    it('it should success when providing image within 20s', (done) => {
+      setTimeout(done, 20000);
 
       chai.request(server)
           .post('/api/picshape/convert')
