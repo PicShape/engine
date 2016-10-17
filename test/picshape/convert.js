@@ -6,6 +6,7 @@ let chai = require('chai');
 let chaiHttp = require('chai-http');
 let server = require('../../server');
 let should = chai.should();
+let fs = require('fs');
 
 chai.use(chaiHttp);
 
@@ -26,12 +27,26 @@ describe('/GET picshape/convert', () => {
 /*
   * Test the /POST route
   */
-describe('/POST picshape/convert', () => {
+describe('/POST picshape/convert', function(){
+    this.timeout(20000);
+
     it('it should fail when not providing image', (done) => {
       chai.request(server)
           .post('/api/picshape/convert')
           .end((err, res) => {
               res.should.have.status(400);
+            done();
+          });
+    });
+
+    it('it should success when providing image within 20s', (done) => {
+      setTimeout(done, 20000);
+
+      chai.request(server)
+          .post('/api/picshape/convert')
+          .attach('photo', fs.readFileSync(__dirname + '/test_patrick.jpg'), 'test_patrick.jpg')
+          .end((err, res) => {
+              res.should.have.status(200);
             done();
           });
     });

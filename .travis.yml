@@ -1,4 +1,7 @@
 language: node_js
+os:
+  - linux
+  - osx
 node_js:
   - '6'
 env:
@@ -11,3 +14,8 @@ addons:
       - g++-4.8
 script:
   - npm run test
+
+
+matrix:
+  allow_failures:
+    - os: osx # OS X is still beta in Travis

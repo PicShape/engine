@@ -1,6 +1,5 @@
 var path = require('path');
 var mime = require('mime');
-var fs = require('fs');
 
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 
@@ -25,10 +24,6 @@ exports.convert = function(req, res){
     return;
   }
 
-
-
-
-  console.log("Convert called.");
   var file = req.file;
   var inputPath = uploadDir + file.fieldname + '.' + mime.extension(file.mimetype);
   var outputPath = uploadDir + 'converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
