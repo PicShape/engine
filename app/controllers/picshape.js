@@ -1,5 +1,6 @@
 var path = require('path');
 var mime = require('mime');
+var fs = require('fs');
 
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 
@@ -17,6 +18,8 @@ exports.middlewareFileUpload = function(req, res, next) {
 
 
 exports.convert = function(req, res){
+  var uploadDir = __dirname + '/../uploads/';
+
   if(req.file == undefined) {
     res.status(400).send('You need to provide an input picture.');
     return;
@@ -28,10 +31,15 @@ exports.convert = function(req, res){
     return;
   }
 
+
+  if (!fs.existsSync(uploadDir)){
+      fs.mkdirSync(uploadDir);
+  }
+
   console.log("Convert called.");
   var file = req.file;
-  var inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);
-  var outputPath = __dirname + '/../uploads/converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
+  var inputPath = uploadDir + file.fieldname + '.' + mime.extension(file.mimetype);
+  var outputPath = uploadDir + 'converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
 
   primitive(inputPath,
             outputPath,
