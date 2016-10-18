@@ -6,7 +6,6 @@ var fs = require('fs');
 var picshapeController = require('../controllers/picshape');
 
 
-
 // Configure storage engine
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
