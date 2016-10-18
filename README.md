@@ -1,6 +1,13 @@
 # Picshape Engine
 _Back-end of PicShape Project_
 
+[![bitHound Overall Score](https://www.bithound.io/github/PicShape/engine/badges/score.svg)](https://www.bithound.io/github/PicShape/engine)
+[![bitHound Dependencies](https://www.bithound.io/github/PicShape/engine/badges/dependencies.svg)](https://www.bithound.io/github/PicShape/engine/develop/dependencies/npm)
+[![bitHound Code](https://www.bithound.io/github/PicShape/engine/badges/code.svg)](https://www.bithound.io/github/PicShape/engine)
+
+[![Build Status](https://travis-ci.org/PicShape/engine.svg?branch=develop)](https://travis-ci.org/PicShape/engine)
+
+
 
 ## Background
 
