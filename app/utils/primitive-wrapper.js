@@ -15,8 +15,8 @@ exports.primitive = function(inputPath, outputPath, config, callback){
 
   var primitiveBinary = 'primitive' + '-' + system  + '-' + arch + extension;
 
-  console.log(primitiveBinary);
-  
+  console.log("Starting", primitiveBinary, "[", config,"]");
+
   const args = ['-i', inputPath, '-o', outputPath, '-n', config.iter, '-m', config.mode];
 
   const primitiveproc = spawn(__dirname + '/primitive/' + primitiveBinary, args);

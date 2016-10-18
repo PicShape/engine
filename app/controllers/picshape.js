@@ -6,37 +6,80 @@ var primitive = require('../utils/primitive-wrapper.js').primitive;
 var photosPath = '/api/gallery/photos/';
 
 exports.middlewareFileUpload = function(req, res, next) {
-  next();
+    next();
 }
 
 exports.convert = function(req, res){
-  var uploadDir = __dirname + '/../uploads/';
 
-  if(req.file == undefined) {
-    res.status(400).send('You need to provide an input picture.');
-    return;
-  }
+    var uploadDir = __dirname + '/../uploads/';
+    const DEFAULT_ITER_AMOUNT = 100;
+    const DEFAULT_MODE = 0;
+    const DEFAULT_FORMAT = 'png';
 
-  var errors = req.validationErrors();
-  if (errors) {
-    res.status(400).send('There have been validation errors: ' + errors);
-    return;
-  }
+    if(req.file == undefined) {
+        res.status(400).send('You need to provide an input picture.');
+        return;
+    }
 
-  var id = Math.random().toString(36).substr(2, 9);
-  console.log("Convert called.");
-  var file = req.file;
-  var inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);
-  var outputPath = __dirname + '/../uploads/'+ id + '.' + mime.extension(file.mimetype);
 
-  primitive(inputPath,
-            outputPath,
-            {
-              iter: 50,
-              mode: 0,
-            },
-            (out) => {
-                res.json({ message: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
-            }
-          );
+    // Validation Scheme for /convert
+    var schema = {
+     'iter': {
+        optional: true,
+
+        in: 'body',
+        notEmpty: true,
+        isInt: {
+          options: [{ min: 1, max: 500 }],
+          errorMessage: 'Invalid iteration amount [1 ; 500]'
+        }
+      },
+      'mode': {
+          optional: true,
+
+          in: 'body',
+          notEmpty: true,
+          isInt: {
+            options: [{ min: 0, max: 8 }],
+            errorMessage: 'Invalid mode number'
+          }
+      },
+     'format': {
+         optional: true,
+
+         in: 'body',
+         notEmpty: true,
+     }
+
+    };
+
+    req.check(schema);
+
+    var errors = req.validationErrors(true);
+    if (errors) {
+        res.status(400).send( {message: 'There have been validation errors.', errors: errors });
+        return;
+    }
+
+    var iter = req.body.iter ? req.body.iter : DEFAULT_ITER_AMOUNT;
+    var mode = req.body.mode ? req.body.mode : DEFAULT_MODE;
+    var format = req.body.format ? req.body.format : DEFAULT_FORMAT;
+
+    var id = Math.random().toString(36).substr(2, 9);
+    var file = req.file;
+    var inputPath = uploadDir + file.fieldname + '.' + mime.extension(file.mimetype);
+    var outputPath = uploadDir + id + '.' + format;
+
+
+    primitive(inputPath,
+        outputPath,
+        {
+            iter: iter,
+            mode: mode,
+            format: format,
+        },
+        (out) => {
+            res.json({ message: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
+        }
+    );
 };
