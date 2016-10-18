@@ -4,8 +4,21 @@ _Back-end of PicShape Project_
 
 ## Background
 
-Picshape Engine is the Node.js back-end hosting the API for image transformation.
-This project exists as a 3rd year project at ENSICAEN and is part of PicShape.
+Picshape Engine is the Node.js back-end hosting the API for image transformation. It is a 3rd year project part of 'PicShape', a cloud image converter using fogleman's primitive project https://github.com/fogleman/primitive.
+
+The project is composed of a front-end, back-end and an Android application. Check https://github.com/PicShape/picshape for more information.
+
+
+
+## Project progress
+
+- [x] Collaborators started with Node.js
+- [x] Bridging primitive with node.js back-end
+- [x] Setup project structure
+- [x] Defining API structure
+- [ ] Finishing full-cycle conversion API
+    - [x] Conversion done by API call
+    - [ ] Returning link to converted photo
 
 
 ## Structure
@@ -26,8 +39,12 @@ engine
 │   └───models                    # Schema for MongoDB models
 │   |   │   ...
 │   └───routes                    # Express routes (API entrypoints)
-│       │   gallery.js            
-|       |   picshape.js
+│   |   │   gallery.js            
+|   |   |   picshape.js
+|   |
+|   └───utils
+|       |   primitive-wrapper.js    # Wrapper to simplify calls to primitive
+        |   primitive/              # Directory containing cross-compiled 'primitive' program for Linux, macOS and Windows.
 |
 |
 └───test                        # Mocha tests
@@ -137,3 +154,33 @@ A model to write API documentation in Markdown can be found here : https://gist.
     }
   }
 }`
+
+**GET /api/gallery/photos/:id**
+----
+  Fetch hosted image with id <id>
+
+* **URL**
+
+  `/api/gallery/photos/:id`
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   `id=[string]` - Image identifier
+
+* **Success Response:**
+
+  Returns the requested image.
+
+  * **Code:** 200 <br />
+    **Content:** `image`
+
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "No image associated with submitted id." }`
