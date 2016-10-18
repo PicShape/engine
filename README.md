@@ -39,7 +39,7 @@ engine
 A model to write API documentation in Markdown can be found here : https://gist.githubusercontent.com/iros/3426278/raw/c847a911bfe1ffcd7a2d659bf972e10ef8badb25/API.md
 
 
-** GET /api/picshape **
+**GET /api/picshape**
 ----
   Fetch a welcome message for testing purpose.
 
@@ -71,7 +71,7 @@ A model to write API documentation in Markdown can be found here : https://gist.
   This request may be not released at the end of the project.
 
 
-  ** POST /api/picshape/convert **
+  **POST /api/picshape/convert**
   ----
     Send an image to be converted by PicShape using 'primitive' given a number
     of iteration and a mode.
