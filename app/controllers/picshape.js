@@ -28,10 +28,11 @@ exports.convert = function(req, res){
     return;
   }
 
+  var id = Math.random().toString(36).substr(2, 9);
   console.log("Convert called.");
   var file = req.file;
   var inputPath = __dirname + '/../uploads/' + file.fieldname + '.' + mime.extension(file.mimetype);
-  var outputPath = __dirname + '/../uploads/converted-'+ file.fieldname + '.' + mime.extension(file.mimetype);
+  var outputPath = __dirname + '/../uploads/'+ id + '.' + mime.extension(file.mimetype);
 
   primitive(inputPath,
             outputPath,
