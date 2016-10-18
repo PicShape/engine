@@ -1,22 +1,17 @@
 var path = require('path');
 var mime = require('mime');
+var express = require('express');
 
 var primitive = require('../utils/primitive-wrapper.js').primitive;
-
+var photosPath = '/api/gallery/photos/';
 
 exports.middlewareFileUpload = function(req, res, next) {
-  if(req.file) {
-    console.log('File uploaded');
-    console.log(req.file);
-  } else {
-    console.log('No file.');
-  }
   next();
 }
 
-
-
 exports.convert = function(req, res){
+  var uploadDir = __dirname + '/../uploads/';
+
   if(req.file == undefined) {
     res.status(400).send('You need to provide an input picture.');
     return;
@@ -41,7 +36,7 @@ exports.convert = function(req, res){
               mode: 0,
             },
             (out) => {
-                res.json({ message: 'Conversion done successfully.', url: outputPath});
+                res.json({ message: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
             }
           );
 };
