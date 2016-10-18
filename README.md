@@ -86,16 +86,24 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
   *  **URL Params**
 
-     `iter=[integer]` - Number of iteration
-
-     `mode=[integer]` - Type of shape to be used
-
+    There are no required parameter
 
   *   **Optional:**
 
-  `iter=[integer]`
+  `format=['png' | 'jpg' | 'svg']` - Output image format (default: png)
 
-  `mode=[integer]`
+  `iter=[integer]` - Number of iteration (min: 1, max: 500, default: 100)
+
+  `mode=[integer]` - Type of shape to be used (default: 0)
+     * 0: combo
+     * 1: triangle
+     * 2: rect
+     * 3: ellipse
+     * 4: circle
+     * 5: rotatedrect
+     * 6: beziers
+     * 7: rotatedellipse
+     * 8: polygon
 
   * **Data Params**
 
@@ -119,4 +127,13 @@ A model to write API documentation in Markdown can be found here : https://gist.
     If there are some validation errors
 
     * **Code:** 400 <br />
-      **Content:** `{ "There have been validation errors: " }`
+      **Content:** `{
+  "message": "There have been validation errors.",
+  "errors": {
+    "iter": {
+      "param": "iter",
+      "msg": "Invalid iteration amount [1 ; 500]",
+      "value": "5000"
+    }
+  }
+}`
