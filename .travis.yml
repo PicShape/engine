@@ -23,4 +23,4 @@ after_success:
         docker build -t picshape/picshape-engine . ;
         docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         docker push picshape/picshape-engine;
-  fi
+    fi
