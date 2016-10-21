@@ -34,7 +34,7 @@ exports.convert = function(req, res){
 
     var iter = req.body.iter ? req.body.iter : DEFAULT_ITER_AMOUNT;
     var mode = req.body.mode ? req.body.mode : DEFAULT_MODE;
-    var format = req.body.format ? req.body.format.toLowerCase(); : DEFAULT_FORMAT;
+    var format = req.body.format ? req.body.format.toLowerCase() : DEFAULT_FORMAT;
 
     var id = Math.random().toString(36).substr(2, 9);
     var file = req.file;
