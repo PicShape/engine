@@ -3,7 +3,7 @@ var mime = require('mime');
 
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 
-
+var validationSchemas = require('./validationSchemas');
 
 exports.middlewareFileUpload = function(req, res, next) {
     next();
@@ -22,7 +22,7 @@ exports.convert = function(req, res){
         return;
     }
 
-    req.check(require('./validationSchemas').convertSchema);
+    req.check(validationSchemas.convertSchema);
 
     var errors = req.validationErrors(true);
     if (errors) {
