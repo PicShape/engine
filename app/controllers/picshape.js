@@ -4,6 +4,7 @@ var mime = require('mime');
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 
 
+
 exports.middlewareFileUpload = function(req, res, next) {
     next();
 }
@@ -21,39 +22,7 @@ exports.convert = function(req, res){
         return;
     }
 
-
-    // Validation Scheme for /convert
-    var schema = {
-     'iter': {
-        optional: true,
-
-        in: 'body',
-        notEmpty: true,
-        isInt: {
-          options: [{ min: 1, max: 500 }],
-          errorMessage: 'Invalid iteration amount [1 ; 500]'
-        }
-      },
-      'mode': {
-          optional: true,
-
-          in: 'body',
-          notEmpty: true,
-          isInt: {
-            options: [{ min: 0, max: 8 }],
-            errorMessage: 'Invalid mode number'
-          }
-      },
-     'format': {
-         optional: true,
-
-         in: 'body',
-         notEmpty: true,
-     }
-
-    };
-
-    req.check(schema);
+    req.check(require('./validationSchemas').convertSchema);
 
     var errors = req.validationErrors(true);
     if (errors) {
@@ -63,7 +32,7 @@ exports.convert = function(req, res){
 
     var iter = req.body.iter ? req.body.iter : DEFAULT_ITER_AMOUNT;
     var mode = req.body.mode ? req.body.mode : DEFAULT_MODE;
-    var format = req.body.format ? req.body.format : DEFAULT_FORMAT;
+    var format = req.body.format ? req.body.format.toLowerCase(); : DEFAULT_FORMAT;
 
     var file = req.file;
     var inputPath = uploadDir + file.fieldname + '.' + mime.extension(file.mimetype);
