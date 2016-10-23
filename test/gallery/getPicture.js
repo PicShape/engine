@@ -19,9 +19,16 @@ chai.use(chaiFs);
 describe('/GET app/api/gallery/photos/:id', () => {
     it('GET should return the picture ', (done) => {
 
+      var uploadDir = __dirname + '/../../app/uploads';
+      // We check if uploads directiry exists. If not, we create it
+      if (!fs.existsSync(uploadDir)){
+          console.log('Creating',uploadDir);
+          fs.mkdirSync(uploadDir);
+      }
+
       var test = __dirname + '/test.jpg';
       test = path.resolve(test);
-      var newDestination = __dirname + '/../../app/uploads/test.jpg';
+      var newDestination = uploadDir + '/test.jpg';
       newDestination = path.resolve(newDestination);
 
       // We copy the file
