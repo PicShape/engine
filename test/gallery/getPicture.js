@@ -20,6 +20,7 @@ describe('/GET app/api/gallery/photos/:id', () => {
     it('GET should return the picture ', (done) => {
 
       var uploadDir = __dirname + '/../../app/uploads';
+      uploadDir = path.resolve(uploadDir);
       // We check if uploads directiry exists. If not, we create it
       if (!fs.existsSync(uploadDir)){
           console.log('Creating',uploadDir);
