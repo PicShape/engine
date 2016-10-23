@@ -19,7 +19,7 @@ notifications:
   slack: leconseil:pDtHDHvDdZt5s4BJZOGcsIm1
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "develop" && "$TRAVIS_OS_NAME" == "linux"]; then
+  - if [ "$TRAVIS_BRANCH" == "develop" ] && [ "$TRAVIS_OS_NAME" == "linux" ]; then
         docker build -t picshape/picshape-engine . ;
         docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         docker push picshape/picshape-engine;

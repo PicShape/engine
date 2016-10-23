@@ -20,7 +20,7 @@ exports.convert = function(req, res){
     const DEFAULT_FORMAT = 'png';
 
     if(req.file == undefined) {
-        res.status(400).send('You need to provide an input picture.');
+        res.status(400).send({ errorMessage : 'You need to provide an input picture.' });
         return;
     }
 
@@ -28,7 +28,7 @@ exports.convert = function(req, res){
 
     var errors = req.validationErrors(true);
     if (errors) {
-        res.status(400).send( {message: 'There have been validation errors.', errors: errors });
+        res.status(400).send( { errorMessage: 'There have been validation errors.', errors: errors });
         return;
     }
 
@@ -50,7 +50,7 @@ exports.convert = function(req, res){
             format: format,
         },
         (out) => {
-            res.json({ message: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
+            res.json({ successMessage: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
         }
     );
 };
