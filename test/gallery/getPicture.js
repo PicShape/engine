@@ -6,33 +6,38 @@ let path = require('path');
 
 //Require the dev-dependencies
 let chai = require('chai');
+let chaiFs = require('chai-fs');
 let chaiHttp = require('chai-http');
 let server = require('../../server');
 let should = chai.should();
 
 chai.use(chaiHttp);
-
+chai.use(chaiFs);
 /*
   * Test the /GET getPicture
   */
-describe('/GET app/api/gallery/photos/', () => {
-    it('GET should return picture ', (done) => {
+describe('/GET app/api/gallery/photos/:id', () => {
+    it('GET should return the picture ', (done) => {
 
-      // var test = fs.createWriteStream('test.jpg');
-      // var bla = __dirname + '/../../app/uploads/test.jpg';
-      //
-      // var path = path.resolve(bla);console.log(path);
-      // fs.createReadStream(path).pipe(test);
-      // expect(path).to.be.a.file();
+      var test = __dirname + '/test.jpg';
+      test = path.resolve(test);
+      var newDestination = __dirname + '/../../app/uploads/test.jpg';
+      newDestination = path.resolve(newDestination);
+
+      // We copy the file
+      var inStr = fs.createReadStream(test);
+      var outStr = fs.createWriteStream(newDestination);
+      inStr.pipe(outStr);
+
+      chai.expect(newDestination).to.be.a.file();
 
       chai.request(server)
           .get('/api/gallery/photos/test')
           .end((err, res) => {
               res.should.have.status(200);
-            done();
           });
-    // it('picture must exist', (done) => {
-    //     // res.body.url.to.be.a.path('http://localhost:8080/api/gallery/photos/test.jpg');
-    //   });
+
+        fs.unlink(newDestination);
+        done();
     });
 });
