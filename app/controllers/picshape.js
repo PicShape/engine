@@ -10,7 +10,7 @@ var photosPath = '/api/gallery/photos/';
 
 exports.middlewareFileUpload = function(req, res, next) {
     next();
-}
+};
 
 exports.convert = function(req, res){
 
@@ -19,7 +19,7 @@ exports.convert = function(req, res){
     const DEFAULT_MODE = 0;
     const DEFAULT_FORMAT = 'png';
 
-    if(req.file == undefined) {
+    if(req.file === undefined) {
         res.status(400).send({ errorMessage : 'You need to provide an input picture.' });
         return;
     }

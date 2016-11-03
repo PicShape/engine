@@ -5,7 +5,7 @@ exports.middlewareFileUpload = function(req, res, next) {
     console.log('File uploaded');
     console.log(req.file);
     next(req, res);
-}
+};
 
 exports.getPicture = function(req, res) {
   var id = req.params.id;
@@ -30,4 +30,4 @@ exports.getPicture = function(req, res) {
   else {
     res.status(400).send('No image associated with submitted id.');
   }
-}
+};
