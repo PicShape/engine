@@ -13,4 +13,4 @@ accountRouter.put('/', accountController.accountPut);
 accountRouter.post('/forget', accountController.forgotPost);
 accountRouter.post('/reset', accountController.resetPost);
 
-module.exports = accountController;
+module.exports = accountRouter;
