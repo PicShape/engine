@@ -42,6 +42,7 @@ var router = express.Router(); // get an instance of the express Router
 // all of our routes will be prefixed with /api
 router.use('/gallery', require('./app/routes/gallery'));
 router.use('/picshape', require('./app/routes/picshape'));
+router.use('/account', require('./app/routes/account'));
 
 app.use('/api',router);
 
