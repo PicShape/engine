@@ -7,7 +7,6 @@ sudo: required
 
 os:
   - linux
-  - osx
 node_js:
   - '6'
 script:
