@@ -80,19 +80,16 @@ exports.signupPost = function(req, res, next) {
         if (user) {
             return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
         }
-        User.find({administrator: true})
-        .limit(1)
-        .exec(function(err, user) {
-            user = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-            });
-            user.save(function(err) {
-                res.send({ token: generateToken(user), user: user });
-            });
 
+        user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
         });
+        user.save(function(err) {
+            res.send({ token: generateToken(user), user: user });
+        });
+
     });
 };
 

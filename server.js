@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var request = require('request');
+var cookieParser = require('cookie-parser');
 
 
 var app = express();
@@ -34,6 +35,8 @@ var User = require('./app/models/User');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(cookieParser());
+
 
 app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
