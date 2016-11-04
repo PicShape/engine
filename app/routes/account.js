@@ -8,8 +8,8 @@ var accountRouter = express.Router(); // get an instance of the express Router
 
 accountRouter.post('/login', accountController.loginPost);
 accountRouter.post('/signup', accountController.signupPost);
-accountRouter.delete('/', accountController.accountDelete);
-accountRouter.put('/', accountController.accountPut);
+accountRouter.delete('/', accountController.ensureAuthenticated, accountController.accountDelete);
+accountRouter.put('/', accountController.ensureAuthenticated, accountController.accountPut);
 accountRouter.post('/forget', accountController.forgotPost);
 accountRouter.post('/reset', accountController.resetPost);
 
