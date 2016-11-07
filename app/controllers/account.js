@@ -1,11 +1,12 @@
-var async = require('async');
+aprevar async = require('async');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var request = require('request');
 var qs = require('querystring');
 var User = require('../models/User');
+var mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API, domain: process.env.MAILGUN_DOMAIN});
+
 
 function generateToken(user) {
     var payload = {
@@ -178,25 +179,19 @@ exports.forgotPost = function(req, res, next) {
             });
         },
         function(token, user, done) {
-            var transporter = nodemailer.createTransport({
-                service: 'Mailgun',
-                auth: {
-                    user: process.env.MAILGUN_USERNAME,
-                    pass: process.env.MAILGUN_PASSWORD
-                }
-            });
             var mailOptions = {
                 to: user.email,
-                from: 'support@benjamindebotte.me',
-                subject: '✔ Reset your password on Sicarius',
+                from: 'picshape@benjamindebotte.me',
+                subject: '✔ Reset your password on PicShape',
                 text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
                 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
                 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
                 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
             };
-            transporter.sendMail(mailOptions, function(err) {
+
+            mailgun.messages().send(mailOptions, function (error, body) {
                 res.send({ msg: 'An email has been sent to ' + user.email + ' with further instructions.' });
-                done(err);
+                done(error);
             });
         }
     ]);
