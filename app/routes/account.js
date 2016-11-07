@@ -10,7 +10,7 @@ accountRouter.post('/login', accountController.loginPost);
 accountRouter.post('/signup', accountController.signupPost);
 accountRouter.delete('/', accountController.ensureAuthenticated, accountController.accountDelete);
 accountRouter.put('/', accountController.ensureAuthenticated, accountController.accountPut);
-accountRouter.post('/forget', accountController.forgotPost);
+accountRouter.post('/forgot', accountController.forgotPost);
 accountRouter.post('/reset', accountController.resetPost);
 
 module.exports = accountRouter;
