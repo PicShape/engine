@@ -1,11 +1,12 @@
 var async = require('async');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var request = require('request');
 var qs = require('querystring');
 var User = require('../models/User');
+var mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API, domain: process.env.MAILGUN_DOMAIN});
+
 
 function generateToken(user) {
     var payload = {
@@ -33,10 +34,10 @@ exports.ensureAuthenticated = function(req, res, next) {
 * Sign in with email and password
 */
 exports.loginPost = function(req, res, next) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('email', 'Email cannot be blank').notEmpty();
-    req.assert('password', 'Password cannot be blank').notEmpty();
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('email', 'Email cannot be blank').notEmpty();
+    req.checkBody('password', 'Password cannot be blank').notEmpty();
+    req.sanitizeBody('email').normalizeEmail({ remove_dots: false });
 
     var errors = req.validationErrors();
 
@@ -63,11 +64,11 @@ exports.loginPost = function(req, res, next) {
 * POST /signup
 */
 exports.signupPost = function(req, res, next) {
-    req.assert('name', 'Name cannot be blank').notEmpty();
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('email', 'Email cannot be blank').notEmpty();
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    req.checkBody('name', 'Name cannot be blank').notEmpty();
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('email', 'Email cannot be blank').notEmpty();
+    req.checkBody('password', 'Password must be at least 4 characters long').len(4);
+    req.sanitizeBody('email').normalizeEmail({ remove_dots: false });
 
     var errors = req.validationErrors();
 
@@ -80,19 +81,15 @@ exports.signupPost = function(req, res, next) {
         if (user) {
             return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
         }
-        User.find({administrator: true})
-        .limit(1)
-        .exec(function(err, user) {
-            user = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-            });
-            user.save(function(err) {
-                res.send({ token: generateToken(user), user: user });
-            });
-
+        user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
         });
+        user.save(function(err) {
+            res.send({ token: generateToken(user), user: user });
+        });
+
     });
 };
 
@@ -103,12 +100,12 @@ exports.signupPost = function(req, res, next) {
 */
 exports.accountPut = function(req, res, next) {
     if ('password' in req.body) {
-        req.assert('password', 'Password must be at least 4 characters long').len(4);
-        req.assert('confirm', 'Passwords must match').equals(req.body.password);
+        req.checkBody('password', 'Password must be at least 4 characters long').len(4);
+        req.checkBody('confirm', 'Passwords must match').equals(req.body.password);
     } else {
-        req.assert('email', 'Email is not valid').isEmail();
-        req.assert('email', 'Email cannot be blank').notEmpty();
-        req.sanitize('email').normalizeEmail({ remove_dots: false });
+        req.checkBody('email', 'Email is not valid').isEmail();
+        req.checkBody('email', 'Email cannot be blank').notEmpty();
+        req.sanitizeBody('email').normalizeEmail({ remove_dots: false });
     }
 
     var errors = req.validationErrors();
@@ -152,9 +149,9 @@ exports.accountDelete = function(req, res, next) {
 * POST /forgot
 */
 exports.forgotPost = function(req, res, next) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('email', 'Email cannot be blank').notEmpty();
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('email', 'Email cannot be blank').notEmpty();
+    req.sanitizeBody('email').normalizeEmail({ remove_dots: false });
 
     var errors = req.validationErrors();
 
@@ -182,25 +179,19 @@ exports.forgotPost = function(req, res, next) {
             });
         },
         function(token, user, done) {
-            var transporter = nodemailer.createTransport({
-                service: 'Mailgun',
-                auth: {
-                    user: process.env.MAILGUN_USERNAME,
-                    pass: process.env.MAILGUN_PASSWORD
-                }
-            });
             var mailOptions = {
                 to: user.email,
-                from: 'support@benjamindebotte.me',
-                subject: '✔ Reset your password on Sicarius',
+                from: 'picshape@benjamindebotte.me',
+                subject: '✔ Reset your password on PicShape',
                 text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
                 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
                 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
                 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
             };
-            transporter.sendMail(mailOptions, function(err) {
+
+            mailgun.messages().send(mailOptions, function (error, body) {
                 res.send({ msg: 'An email has been sent to ' + user.email + ' with further instructions.' });
-                done(err);
+                done(error);
             });
         }
     ]);
@@ -210,8 +201,8 @@ exports.forgotPost = function(req, res, next) {
 * POST /reset
 */
 exports.resetPost = function(req, res, next) {
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirm', 'Passwords must match').equals(req.body.password);
+    req.checkBody('password', 'Password must be at least 4 characters long').len(4);
+    req.checkBody('confirm', 'Passwords must match').equals(req.body.password);
 
     var errors = req.validationErrors();
 
@@ -244,14 +235,15 @@ exports.resetPost = function(req, res, next) {
                 }
             });
             var mailOptions = {
-                from: 'support@benjamindebotte.me',
+                from: 'picshape@benjamindebotte.me',
                 to: user.email,
-                subject: 'Your Sicarius password has been changed',
+                subject: 'Your PicShape password has been changed',
                 text: 'Hello,\n\n' +
                 'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
             };
-            transporter.sendMail(mailOptions, function(err) {
+            mailgun.messages().send(mailOptions, function (error, body) {
                 res.send({ msg: 'Your password has been changed successfully.' });
+                done(error);
             });
         }
     ]);
