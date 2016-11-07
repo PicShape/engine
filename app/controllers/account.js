@@ -235,14 +235,15 @@ exports.resetPost = function(req, res, next) {
                 }
             });
             var mailOptions = {
-                from: 'support@benjamindebotte.me',
+                from: 'picshape@benjamindebotte.me',
                 to: user.email,
-                subject: 'Your Sicarius password has been changed',
+                subject: 'Your PicShape password has been changed',
                 text: 'Hello,\n\n' +
                 'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
             };
-            transporter.sendMail(mailOptions, function(err) {
+            mailgun.messages().send(mailOptions, function (error, body) {
                 res.send({ msg: 'Your password has been changed successfully.' });
+                done(error);
             });
         }
     ]);
