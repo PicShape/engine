@@ -23,9 +23,10 @@ The project is composed of a front-end, back-end and an Android application. Che
 - [x] Bridging primitive with node.js back-end
 - [x] Setup project structure
 - [x] Defining API structure
-- [ ] Finishing full-cycle conversion API
+- [x] Finishing full-cycle conversion API
     - [x] Conversion done by API call
-    - [ ] Returning link to converted photo
+    - [x] Returning link to converted photo
+- [ ] Adding fully-functionnal authenticated API based on local accounts.
 
 
 ## Structure
@@ -43,11 +44,15 @@ engine
 │   └───controllers               # Instructions executed (API endpoints)
 │   |   │   gallery.js
 │   |   │   picshape.js
-│   └───models                    # Schema for MongoDB models
-│   |   │   ...
+│   |   │   account.js
+|   |
+│   └───models                    # Schemas for MongoDB models
+│   |   │   User.js                 # Schema for an User
+|   |
 │   └───routes                    # Express routes (API entrypoints)
 │   |   │   gallery.js            
 |   |   |   picshape.js
+|   |   |   account.js
 |   |
 |   └───utils
 |       |   primitive-wrapper.js    # Wrapper to simplify calls to primitive
@@ -62,6 +67,7 @@ engine
 
 A model to write API documentation in Markdown can be found here : https://gist.githubusercontent.com/iros/3426278/raw/c847a911bfe1ffcd7a2d659bf972e10ef8badb25/API.md
 
+### PicShape conversion API
 
 **GET /api/picshape**
 ----
@@ -95,7 +101,7 @@ A model to write API documentation in Markdown can be found here : https://gist.
   This request may be not released at the end of the project.
 
 
-  **POST /api/picshape/convert**
+**POST /api/picshape/convert**
   ----
     Send an image to be converted by PicShape using 'primitive' given a number
     of iteration and a mode.
@@ -191,3 +197,218 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
   * **Code:** 400 BAD REQUEST <br />
     **Content:** `{ error : "No image associated with submitted id." }`
+
+
+### PicShape Authentication API
+
+**POST /api/account/login**
+  ----
+    Send an Authentication Header through HTTP to retrieve an authentication token for API access.
+
+  * **URL**
+
+    `/api/account/login`
+
+  * **Method:**
+
+    `POST`
+
+  *  **URL Params**
+
+    There are no required parameter
+
+  *   **Optional:**
+
+
+
+  * **Success Response:**
+
+    On success, a response payload contains the generated token.
+
+    * **Code:** 200 <br />
+      **Content:** `{ message : "Authentication successful", token: <token>  }`
+
+
+  * **Error Response:**
+
+    If some field is missing or invalid.
+
+    * **Code:** 400 <br />
+      **Content:** `{ }`
+
+**POST /api/account/signup**
+----
+  Create account passing parameters as email, password and username.
+
+* **URL**
+
+  `/api/account/signup`
+
+* **Method:**
+
+  `POST`
+
+*  **URL Params**
+
+  There are no required parameter
+
+*   **Optional:**
+
+
+
+* **Success Response:**
+
+
+  * **Code:** 200 <br />
+    **Content:** `{ message : "Account created successfully" }`
+
+
+* **Error Response:**
+
+  If some field is missing or invalid.
+
+  * **Code:** 400 <br />
+    **Content:** `{ }`
+
+**DELETE /api/account/**
+----
+  Delete account associated with your token.
+
+* **URL**
+
+  `/api/account/`
+
+* **Method:**
+
+  `DELETE`
+
+*  **URL Params**
+
+  There are no required parameter
+
+*   **Optional:**
+
+
+
+* **Success Response:**
+
+  On success, a response payload is sent.
+
+  * **Code:** 200 <br />
+    **Content:** `{ message : "Deletion successful" }`
+
+
+* **Error Response:**
+
+  If some field is missing or invalid.
+
+  * **Code:** 400 <br />
+    **Content:** `{ }`
+
+
+**PUT /api/account/**
+----
+  Modify account passing parameters as email, password and username.
+
+* **URL**
+
+  `/api/account/`
+
+* **Method:**
+
+  `PUT`
+
+*  **URL Params**
+
+  There are no required parameter
+
+*   **Optional:**
+
+
+
+* **Success Response:**
+
+  On success, a response payload is sent.
+
+  * **Code:** 200 <br />
+    **Content:** `{ message : "Update successful" }`
+
+
+* **Error Response:**
+
+  If some field is missing or invalid.
+
+  * **Code:** 400 <br />
+    **Content:** `{ }`
+
+**POST /api/account/forgot**
+----
+  Send an e-mail to the associated account's e-mail with a reset-password link.
+
+* **URL**
+
+  `/api/account/forgot`
+
+* **Method:**
+
+  `POST`
+
+*  **URL Params**
+
+  There are no required parameter
+
+*   **Optional:**
+
+
+
+* **Success Response:**
+
+  On success, a response payload is sent.
+
+  * **Code:** 200 <br />
+    **Content:** `{ message : "Authentication successful" }`
+
+
+* **Error Response:**
+
+  If some field is missing or invalid.
+
+  * **Code:** 400 <br />
+    **Content:** `{ }`
+
+
+
+**POST /api/account/reset**
+----
+  Reset password with a new one.
+
+* **URL**
+
+  `/api/account/reset`
+
+* **Method:**
+
+  `POST`
+
+*  **URL Params**
+
+  There are no required parameter
+
+*   **Optional:**
+
+
+
+* **Success Response:**
+
+  On success, a response payload is sent.
+
+  * **Code:** 200 <br />
+    **Content:** `{ message : "Authentication successful" }`
+
+
+* **Error Response:**
+
+  If some field is missing or invalid.
+
+  * **Code:** 400 <br />
+    **Content:** `{ }`
