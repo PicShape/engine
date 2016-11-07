@@ -1,4 +1,4 @@
-aprevar async = require('async');
+var async = require('async');
 var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
