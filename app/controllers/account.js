@@ -140,6 +140,10 @@ exports.accountPut = function(req, res, next) {
 * DELETE /account
 */
 exports.accountDelete = function(req, res, next) {
+    if(!req.user) {
+        res.status(401).send({ msg: 'User requested not valid.');
+        return;
+    }
     User.remove({ _id: req.user.id }, function(err) {
         res.send({ msg: 'Your account has been permanently deleted.' });
     });
