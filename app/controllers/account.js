@@ -141,7 +141,7 @@ exports.accountPut = function(req, res, next) {
 */
 exports.accountDelete = function(req, res, next) {
     if(!req.user) {
-        res.status(401).send({ msg: 'User requested not valid.');
+        res.status(401).send({ msg: 'User requested not valid.' });
         return;
     }
     User.remove({ _id: req.user.id }, function(err) {
