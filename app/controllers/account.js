@@ -46,12 +46,22 @@ exports.loginPost = function(req, res, next) {
     }
 
     User.findOne({ email: req.body.email }, function(err, user) {
+        if(err) {
+            console.log('Login error', err);
+            return res.status(500).send({ msg: 'An error occured.' });
+        }
+
         if (!user) {
             return res.status(401).send({ msg: 'The email address ' + req.body.email + ' is not associated with any account. ' +
             'Double-check your email address and try again.'
         });
     }
     user.comparePassword(req.body.password, function(err, isMatch) {
+        if(err) {
+            console.log('Signup error', err);
+            return res.status(500).send({ msg: 'An error occured.' });
+        }
+
         if (!isMatch) {
             return res.status(401).send({ msg: 'Invalid email or password' });
         }
@@ -92,6 +102,11 @@ exports.signupPost = function(req, res, next) {
             password: req.body.password,
         });
         user.save(function(err) {
+            if(err) {
+                console.log('Save error', err);
+                return res.status(500).send({ msg: 'An error occured.' });
+            }
+
             res.send({ token: generateToken(user), user: user });
         });
 
