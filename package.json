@@ -25,6 +25,7 @@
   "homepage": "https://github.com/PicShape/engine#readme",
   "dependencies": {
     "async": "^2.1.2",
+    "babel-core": "^6.18.2",
     "babel-polyfill": "^6.16.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
