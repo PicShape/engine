@@ -65,7 +65,7 @@ app.use(function(req, res, next) {
         var payload = req.isAuthenticated();
         User.findById(payload.sub, function(err, user) {
             req.user = user;
-            next();
+            next(err);
         });
     } else {
         next();

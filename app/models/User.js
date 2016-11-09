@@ -30,7 +30,7 @@ userSchema.pre('save', function(next) {
   bcrypt.genSalt(10, function(err, salt) {
     bcrypt.hash(user.password, salt, null, function(err, hash) {
       user.password = hash;
-      next();
+      next(err);
     });
   });
 });
