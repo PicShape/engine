@@ -8,6 +8,9 @@ _Back-end of PicShape Project_
 [![Build Status](https://travis-ci.org/PicShape/engine.svg?branch=develop)](https://travis-ci.org/PicShape/engine)
 
 
+Note : For Travis-CI and Heroku, we use mLab to host our MongoDB Database.
+
+
 
 ## Background
 
@@ -26,7 +29,7 @@ The project is composed of a front-end, back-end and an Android application. Che
 - [x] Finishing full-cycle conversion API
     - [x] Conversion done by API call
     - [x] Returning link to converted photo
-- [ ] Adding fully-functionnal authenticated API based on local accounts.
+- [x] Adding fully-functionnal authenticated API based on local accounts.
 
 
 ## Structure

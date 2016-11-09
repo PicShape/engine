@@ -78,6 +78,11 @@ exports.signupPost = function(req, res, next) {
 
     /* Attention à bien répercuter les modifications à tout les modules d'authentification */
     User.findOne({ email: req.body.email }, function(err, user) {
+        if(err) {
+            console.log('Signup error', err);
+            return res.status(500).send({ msg: 'An error occured.' });
+        }
+
         if (user) {
             return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
         }
@@ -115,6 +120,11 @@ exports.accountPut = function(req, res, next) {
     }
 
     User.findById(req.user.id, function(err, user) {
+        if(err) {
+            console.log('Account update error', err);
+            return res.status(500).send({ msg: 'An error occured.' });
+        }
+
         if ('password' in req.body) {
             user.password = req.body.password;
         } else {
@@ -145,6 +155,10 @@ exports.accountDelete = function(req, res, next) {
         return;
     }
     User.remove({ _id: req.user.id }, function(err) {
+        if(err) {
+            console.log('Delete error', err);
+            return res.status(500).send({ msg: 'An error occured.' });
+        }
         res.send({ msg: 'Your account has been permanently deleted.' });
     });
 };
@@ -172,6 +186,11 @@ exports.forgotPost = function(req, res, next) {
         },
         function(token, done) {
             User.findOne({ email: req.body.email }, function(err, user) {
+                if(err) {
+                    console.log('Forgot error', err);
+                    return res.status(500).send({ msg: 'An error occured.' });
+                }
+
                 if (!user) {
                     return res.status(400).send({ msg: 'The email address ' + req.body.email + ' is not associated with any account.' });
                 }
@@ -219,6 +238,11 @@ exports.resetPost = function(req, res, next) {
             User.findOne({ passwordResetToken: req.params.token })
             .where('passwordResetExpires').gt(Date.now())
             .exec(function(err, user) {
+                if(err) {
+                    console.log('Reset error', err);
+                    return res.status(500).send({ msg: 'An error occured.' });
+                }
+
                 if (!user) {
                     return res.status(400).send({ msg: 'Password reset token is invalid or has expired.' });
                 }
