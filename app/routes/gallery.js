@@ -7,6 +7,7 @@ var galleryController = require('../controllers/gallery');
 var galleryRouter = express.Router(); // get an instance of the express Router
 
 galleryRouter.get('/',(req,res)=>{res.json('yay');});
-galleryRouter.get('/photos/:id', galleryController.getPicture);
+galleryRouter.get('/photos/:user/:id', galleryController.getPicture);
+galleryRouter.get('/photos/:user', galleryController.getPictures);
 
 module.exports = galleryRouter;

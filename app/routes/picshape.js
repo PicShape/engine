@@ -3,13 +3,14 @@ var multer  = require('multer');
 var mime = require('mime');
 var fs = require('fs');
 
+var accountController = require('../controllers/account');
 var picshapeController = require('../controllers/picshape');
 
 
 // Configure storage engine
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    var uploadDir = __dirname + '/../uploads/';
+    var uploadDir = __dirname + '/../uploads/' + req.user.name;
 
     if (!fs.existsSync(uploadDir)){
         console.log('Creating',uploadDir);
@@ -19,7 +20,8 @@ var storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '.' + mime.extension(file.mimetype));
+    var id = Math.random().toString(36).substr(2, 9);
+    cb(null, id + '.' + mime.extension(file.mimetype));
   }
 });
 
@@ -35,7 +37,7 @@ var picshapeRouter = express.Router(); // get an instance of the express Router
 picshapeRouter.use(picshapeController.middlewareFileUpload);
 
 picshapeRouter.get('/', (req, res) => { res.json('Welcome to PicShape sub-API !'); });
-picshapeRouter.post('/convert',upload.single('photo'),picshapeController.convert);
+picshapeRouter.post('/convert', accountController.ensureAuthenticated, upload.single('photo'), picshapeController.convert);
 
 
 module.exports = picshapeRouter;
