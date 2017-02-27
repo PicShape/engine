@@ -13,8 +13,8 @@ exports.middlewareFileUpload = function(req, res, next) {
 };
 
 exports.convert = function(req, res){
-
-    var uploadDir = __dirname + '/../uploads/';
+    console.log(req.user);
+    var uploadDir = __dirname + '/../uploads/' + req.user.name + '/';
     const DEFAULT_ITER_AMOUNT = 100;
     const DEFAULT_MODE = 0;
     const DEFAULT_FORMAT = 'png';
@@ -36,10 +36,9 @@ exports.convert = function(req, res){
     var mode = req.body.mode ? req.body.mode : DEFAULT_MODE;
     var format = req.body.format ? req.body.format.toLowerCase() : DEFAULT_FORMAT;
 
-    var id = Math.random().toString(36).substr(2, 9);
     var file = req.file;
-    var inputPath = uploadDir + file.fieldname + '.' + mime.extension(file.mimetype);
-    var outputPath = uploadDir + id + '.' + format;
+    var inputPath = uploadDir + file.filename;
+    var outputPath = uploadDir + 'converted-' + file.filename;
 
 
     primitive(inputPath,
@@ -50,7 +49,7 @@ exports.convert = function(req, res){
             format: format,
         },
         (out) => {
-            res.json({ successMessage: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + id});
+            res.json({ successMessage: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + req.user.name + '/converted-' + file.filename });
         }
     );
 };
