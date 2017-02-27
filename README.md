@@ -8,6 +8,9 @@ _Back-end of PicShape Project_
 [![Build Status](https://travis-ci.org/PicShape/engine.svg?branch=develop)](https://travis-ci.org/PicShape/engine)
 
 
+Note : For Travis-CI and Heroku, we use mLab to host our MongoDB Database.
+
+
 
 ## Background
 
@@ -26,7 +29,7 @@ The project is composed of a front-end, back-end and an Android application. Che
 - [x] Finishing full-cycle conversion API
     - [x] Conversion done by API call
     - [x] Returning link to converted photo
-- [ ] Adding fully-functionnal authenticated API based on local accounts.
+- [x] Adding fully-functionnal authenticated API based on local accounts.
 
 
 ## Structure
@@ -203,7 +206,7 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
 **POST /api/account/login**
   ----
-    Send an Authentication Header through HTTP to retrieve an authentication token for API access.
+    Send an payload through HTTP to retrieve an authentication token for API access.
 
   * **URL**
 
@@ -215,9 +218,10 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
   *  **URL Params**
 
-    There are no required parameter
+  **Required:**
 
-  *   **Optional:**
+  `email=[string]` - email of the account
+  `password=[string]` - password of the account
 
 
 
@@ -226,15 +230,40 @@ A model to write API documentation in Markdown can be found here : https://gist.
     On success, a response payload contains the generated token.
 
     * **Code:** 200 <br />
-      **Content:** `{ message : "Authentication successful", token: <token>  }`
+      **Content:** `{
+  "token": "<token>",
+  "user": {
+    "_id": "<id>",
+    "updatedAt": "<date>",
+    "createdAt": "<date>",
+    "name": "<name>",
+    "email": "<email>",
+    "password": "<hashedPassword>",
+    "__v": 0,
+    "gravatar": "<gravatarUrl>",
+    "id": "<userId>"
+  }
+}`
 
 
   * **Error Response:**
 
-    If some field is missing or invalid.
+    If some field is missing or invalid, returns an array of validation errors.
 
-    * **Code:** 400 <br />
-      **Content:** `{ }`
+    * **Code:** 400 Bad Request<br />
+    **Content:** `[
+  {
+    "param": "<paramName>",
+    "msg": "<> is not valid.",
+    "value": "<>"
+  }
+]`
+
+    * **Code:** 401 Unauthorized <br />
+    **Content:** `{
+    "msg": "Invalid email or password"
+    }`
+
 
 **POST /api/account/signup**
 ----
@@ -250,9 +279,11 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
 *  **URL Params**
 
-  There are no required parameter
+**Required:**
 
-*   **Optional:**
+`email=[string]` - email of the account
+`password=[string]` - password of the account
+`name=[string]` - name of the account
 
 
 
@@ -260,15 +291,41 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
 
   * **Code:** 200 <br />
-    **Content:** `{ message : "Account created successfully" }`
+    **Content:** `{
+"token": "<token>",
+"user": {
+  "_id": "<id>",
+  "updatedAt": "<date>",
+  "createdAt": "<date>",
+  "name": "<name>",
+  "email": "<email>",
+  "password": "<hashedPassword>",
+  "__v": 0,
+  "gravatar": "<gravatarUrl>",
+  "id": "<userId>"
+}
+}`
 
 
 * **Error Response:**
 
   If some field is missing or invalid.
 
-  * **Code:** 400 <br />
-    **Content:** `{ }`
+  * **Code:** 400 Bad Request<br />
+  **Content:** `[
+  {
+  "param": "<paramName>",
+  "msg": "<> is not valid.",
+  "value": "<>"
+  }
+  ]`
+
+  If an account already exists with the associated email
+  * **Code:** 400 Bad Request<br />
+  **Content:** `{
+  "msg": "The email address you have entered is already associated with another account."
+}`
+
 
 **DELETE /api/account/**
 ----
@@ -286,8 +343,13 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
   There are no required parameter
 
-*   **Optional:**
+* **Headers**
 
+    A Key/Value Authorization header must be generated with the authentification token.
+
+    * **Content** :
+        * Key: `Authorization`
+        * Value : `token: <token>`
 
 
 * **Success Response:**
@@ -295,7 +357,9 @@ A model to write API documentation in Markdown can be found here : https://gist.
   On success, a response payload is sent.
 
   * **Code:** 200 <br />
-    **Content:** `{ message : "Deletion successful" }`
+    **Content:** `{
+  "msg": "Your account has been permanently deleted."
+}`
 
 
 * **Error Response:**
@@ -323,6 +387,10 @@ A model to write API documentation in Markdown can be found here : https://gist.
   There are no required parameter
 
 *   **Optional:**
+    `email=[string]` - email of the account
+
+    `password=[string]` - password of the account
+    `confirm=[string]` - confirm password of the account
 
 
 
@@ -331,15 +399,24 @@ A model to write API documentation in Markdown can be found here : https://gist.
   On success, a response payload is sent.
 
   * **Code:** 200 <br />
-    **Content:** `{ message : "Update successful" }`
+    **Content:** `{
+  "msg": "Your password/email has been changed."
+}`
 
 
 * **Error Response:**
 
-  If some field is missing or invalid.
+    If some field is missing or invalid.
 
-  * **Code:** 400 <br />
-    **Content:** `{ }`
+    * **Code:** 400 Bad Request<br />
+    **Content:** `[
+    {
+    "param": "<paramName>",
+    "msg": "<> is not valid.",
+    "value": "<>"
+    }
+    ]`
+
 
 **POST /api/account/forgot**
 ----
@@ -355,9 +432,9 @@ A model to write API documentation in Markdown can be found here : https://gist.
 
 *  **URL Params**
 
-  There are no required parameter
+*   **Required:**
 
-*   **Optional:**
+    `email=[string]` - email of the account
 
 
 
@@ -366,21 +443,27 @@ A model to write API documentation in Markdown can be found here : https://gist.
   On success, a response payload is sent.
 
   * **Code:** 200 <br />
-    **Content:** `{ message : "Authentication successful" }`
+    **Content:** `{
+  "msg": "An email has been sent to benjamin.debotte@gmail.com with further instructions."
+}`
 
 
 * **Error Response:**
 
-  If some field is missing or invalid.
+  If email's account is missing or invalid.
 
-  * **Code:** 400 <br />
-    **Content:** `{ }`
+  * **Code:** 400 Bad Request<br />
+    **Content:** `{
+  "msg": "The email address <> is not associated with any account."
+}`
 
 
 
 **POST /api/account/reset**
 ----
-  Reset password with a new one.
+  Reset password with a new one. This API entry-point must be the follow-up of /api/account/forgot.
+
+    Forgot creates a passwordResetToken, which will be sent through email to the user. This Reset token must be a parameter of reset and not be counfounded to the Authorization token.
 
 * **URL**
 
