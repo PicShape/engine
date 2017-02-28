@@ -10,14 +10,20 @@ var picshapeController = require('../controllers/picshape');
 // Configure storage engine
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    var uploadDir = __dirname + '/../uploads/' + req.user.name;
+    var uploadDir = __dirname + '/../uploads/';
+    var userUploadDir = uploadDir +  req.user.name;
+
 
     if (!fs.existsSync(uploadDir)){
         console.log('Creating',uploadDir);
         fs.mkdirSync(uploadDir);
     }
+    if (!fs.existsSync(userUploadDir)){
+        console.log('Creating',userUploadDir);
+        fs.mkdirSync(userUploadDir);
+    }
 
-    cb(null, uploadDir);
+    cb(null, userUploadDir);
   },
   filename: function (req, file, cb) {
     var id = Math.random().toString(36).substr(2, 9);
