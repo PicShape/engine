@@ -18,7 +18,6 @@ dotenv.load();
 
 describe('Account management', function() {
 
-  var token;
 
   it('/POST /signup must return a token and user information', function(done) {
 
