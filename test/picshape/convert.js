@@ -9,17 +9,31 @@ let should = chai.should();
 let fs = require('fs');
 
 chai.use(chaiHttp);
+var token;
 
 /*
   * Test the /GET route
   */
-describe('/GET picshape/convert', () => {
-    it('it should fail on GET', (done) => {
+describe('/GET picshape/convert', function() {
+    it('it should fail on GET', function(done) {
+
+      // We recreate the user for next tests
       chai.request(server)
-          .get('/api/picshape/convert')
-          .end((err, res) => {
-              res.should.have.status(404);
-            done();
+          .post('/api/account/signup')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+          .send({ name: 'test',
+                  email: 'test@test.fr',
+                  password: 'test' })
+          .end(function(err, res) {
+              token = res.body.token;
+
+              chai.request(server)
+                  .get('/api/picshape/convert')
+                  .set('Authorization', 'token: ' + token)
+                  .end((err, res) => {
+                      res.should.have.status(404);
+                      done();
+                  });
           });
     });
 });
@@ -30,24 +44,34 @@ describe('/GET picshape/convert', () => {
 describe('/POST picshape/convert', function(){
     this.timeout(60000);
 
-    it('it should fail when not providing image', (done) => {
+    it('it should fail when not providing image', function(done) {
       chai.request(server)
           .post('/api/picshape/convert')
-          .end((err, res) => {
+          .set('Authorization', 'token: ' + token)
+          .end(function(err, res) {
               res.should.have.status(400);
-            done();
+              done();
           });
     });
 
-    it('it should success when providing image. Timeout - 60s', (done) => {
+    it('it should success when providing image. Timeout - 60s', function(done) {
       setTimeout(done, 60000);
 
       chai.request(server)
           .post('/api/picshape/convert')
+          .set('Authorization', 'token: ' + token)
           .attach('photo', fs.readFileSync(__dirname + '/test_patrick.jpg'), 'test_patrick.jpg')
-          .end((err, res) => {
+          .end(function(err, res) {
               res.should.have.status(200);
-            done();
+
+              // We remove the acccount because we don't need it anymore
+              chai.request(server)
+                  .delete('/api/account')
+                  .set('Content-Type', 'application/x-www-form-urlencoded')
+                  .set('Authorization', 'token: ' + token)
+                  .end(function(err, res) {
+                    done();
+                  });
           });
     });
 });
