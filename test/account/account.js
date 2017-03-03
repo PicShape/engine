@@ -16,6 +16,8 @@ chai.use(chaiHttp);
 
 dotenv.load();
 
+
+
 describe('Account management', function() {
 
 
@@ -78,9 +80,8 @@ describe('Account management', function() {
         .delete('/api/account')
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Authorization', 'token: ' + token)
-        .end(function(err, res) {
-            res.should.have.status(200);
+        .end(function(error, response) {
+            response.should.have.status(200);
             done();
-        });
-  });
+        });  });
 });
