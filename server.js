@@ -86,6 +86,7 @@ var router = express.Router(); // get an instance of the express Router
 router.use('/gallery', require('./app/routes/gallery'));
 router.use('/picshape', require('./app/routes/picshape'));
 router.use('/account', require('./app/routes/account'));
+router.use('/users', require('./app/routes/users'));
 
 app.use('/api',router);
 
