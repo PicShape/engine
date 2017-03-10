@@ -32,9 +32,17 @@ exports.convert = function(req, res){
         return;
     }
 
-    var iter = req.body.iter ? req.body.iter : DEFAULT_ITER_AMOUNT;
-    var mode = req.body.mode ? req.body.mode : DEFAULT_MODE;
-    var format = req.body.format ? req.body.format.toLowerCase() : DEFAULT_FORMAT;
+    // Fallback 'just in case'
+    if(req.file === undefined) {
+        res.status(400).send({ errorMessage : 'You need to provide an input picture.' });
+        return;
+    }
+
+    var config = {
+        iter: req.body.iter ? req.body.iter : DEFAULT_ITER_AMOUNT,
+        mode: req.body.mode ? req.body.mode : DEFAULT_MODE,
+        format: req.body.format ? req.body.format.toLowerCase() : DEFAULT_FORMAT
+    };
 
     var file = req.file;
     var inputPath = uploadDir + file.filename;
@@ -43,11 +51,7 @@ exports.convert = function(req, res){
 
     primitive(inputPath,
         outputPath,
-        {
-            iter: iter,
-            mode: mode,
-            format: format,
-        },
+        config,
         (out) => {
             res.json({ successMessage: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + req.user.name + '/converted-' + file.filename });
         }

@@ -22,7 +22,7 @@ function generateToken(user) {
 * Login required middleware
 */
 exports.ensureAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && req.user) {
         next();
     } else {
         res.status(401).send({ msg: 'Unauthorized' });
