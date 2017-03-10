@@ -1,4 +1,5 @@
 var express = require('express');
+var accountController = require('../controllers/account');
 
 var galleryController = require('../controllers/gallery');
 
@@ -6,8 +7,9 @@ var galleryController = require('../controllers/gallery');
 // =============================================================================
 var galleryRouter = express.Router(); // get an instance of the express Router
 
-galleryRouter.get('/',(req,res)=>{res.json('yay');});
 galleryRouter.get('/photos/:user/:id', galleryController.getPicture);
 galleryRouter.get('/photos/:user', galleryController.getPictures);
+galleryRouter.delete('/photos/:user/:id', accountController.ensureAuthenticated, galleryController.deletePicture);
+
 
 module.exports = galleryRouter;

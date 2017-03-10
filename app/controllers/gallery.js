@@ -5,65 +5,119 @@ var async = require('async');
 
 var photosAPIPath = '/api/gallery/photos/';
 
+// Utility function to check and returns file if it exists.
+// Use with function(err, result) where results is 'undefined' if 0 file found.
+function getPictureById(id, user, cb) {
+    var uploadPath = path.join(__dirname, '/../uploads/', user, '/');
+
+    var stripedId = id.replace(/\.[a-z]*/g,""); //Strip extension if it exists
+    var flatFile = path.resolve(uploadPath + stripedId);
+    var pngFile = path.resolve(flatFile + '.png');
+    var jpgFile = path.resolve(flatFile + '.jpg');
+    var svgFile = path.resolve(flatFile + '.svg');
+
+
+
+    async.detect([pngFile,jpgFile,svgFile], function(filePath, callback) {
+        fs.access(filePath, function(err) {
+            callback(null, !err)
+        });
+    }, cb);
+}
+
 exports.middlewareFileUpload = function(req, res, next) {
     console.log('File uploaded');
     console.log(req.file);
     next(req, res);
 };
 
+
 exports.getPicture = function(req, res) {
-  var id = req.params.id;
-  var user = req.params.user;
-  var uploadPath = __dirname + '/../uploads/' + user + '/';
+    var id = req.params.id;
+    var user = req.params.user;
 
-  var flatFile = path.resolve(uploadPath + id);
-  var pngFile = path.resolve(uploadPath + id + '.png');
-  var jpgFile = path.resolve(uploadPath + id + '.jpg');
-  var svgFile = path.resolve(uploadPath + id + '.svg');
-
-  if(fs.existsSync(flatFile)) {
-    res.sendFile(flatFile);
-    console.log(flatFile);
-  }
-  else if(fs.existsSync(pngFile)) {
-    res.sendFile(pngFile);
-    console.log(pngFile);
-  }
-  else if (fs.existsSync(jpgFile)) {
-    res.sendFile(jpgFile);
-    console.log(jpgFile);
-  }
-  else if (fs.existsSync(svgFile)) {
-    res.sendFile(svgFile);
-    console.log(svgFile);
-  }
-  else {
-    res.status(400).send('No image associated with submitted id.');
-  }
+    getPictureById(id, user, function(err, result) {
+        if(result === undefined){
+            return res.status(400).send({
+                errorMessage: 'Image with id ' + id + ' not found.',
+            });
+        }
+        res.sendFile(result);
+    });
 };
 
 exports.getPictures = function(req, res) {
-  var id = req.params.id;
-  var user = req.params.user;
-  var uploadPath = __dirname + '/../uploads/' + user + '/';
+    var id = req.params.id;
+    var user = req.params.user;
+    var uploadPath = path.join(__dirname, '/../uploads/', user, '/');
 
-  glob("?????????.*", {cwd: uploadPath}, function (er, files) {
-    async.map(files, function(file, cb){
-        var APILink = 'http://' + req.headers.host + photosAPIPath + user + '/';
-        console.log(file);
-        cb(null,{
-            photo: APILink + file,
-            thumbnail: APILink + 'thumbnail-'+file,
-            converted: APILink + 'converted-'+file
+    glob("?????????.*", { //9 symbols ID
+        cwd: uploadPath
+    }, function(er, files) {
+        async.map(files, function(file, cb) {
+            var APILink = 'http://' + req.headers.host + photosAPIPath + user + '/';
+            console.log(file);
+            cb(null, {
+                photo: APILink + file,
+                thumbnail: APILink + 'thumbnail-' + file,
+                converted: APILink + 'converted-' + file
+            });
+        }, function(err, results) {
+            console.log(results);
+            if (err) {
+                res.status(400).send({
+                    errorMessage: 'There have been errors.',
+                    errors: err
+                });
+                return;
+            }
+            res.send(results);
         });
-    }, function(err, results) {
-        console.log(results);
-        if (err) {
-            res.status(400).send( { errorMessage: 'There have been errors.', errors: err });
-            return;
-        }
-        res.send(results);
     });
-  });
 
 };
+
+exports.deletePicture = function(req, res) {
+    var id = req.params.id;
+    var user = req.params.user;
+
+    // Security check
+    if(req.user.name != req.params.user) {
+        console.log("User checking failed " + req.user.name + " " + req.params.user);
+        return res.status(401).send({ msg: 'Unauthorized' });
+    }
+
+    getPictureById(id, user, function(err, result) {
+        if(result === undefined){
+            return res.status(400).send({
+                errorMessage: 'Image with id ' + id + ' not found.',
+            });
+        }
+        var pathToUserBaseDirectory = path.join(__dirname, '/../uploads/', user, '/');
+        var file = path.basename(result);
+
+        // We strip converted or thumbnail to avoid errors
+        file = file.replace(/(converted|thumbnail)./i,"");
+        console.log("stripped file : " + file);
+
+        var picturesToDelete = [
+            path.join(pathToUserBaseDirectory, file),
+            // path.join(pathToUserBaseDirectory,'thumbnail-' + file), TODO: no thumbnail ATM.
+            path.join(pathToUserBaseDirectory,'converted-' + file)
+        ];
+
+        console.log('Files to delete: ' + picturesToDelete);
+
+        async.each(picturesToDelete, fs.unlink, (err) => {
+            if(err) {
+                return res.status(400).send({
+                    errorMessage: 'There have been errors.',
+                    errors: err
+                });
+            }
+            res.send({msg: 'Picture successfully deleted !', files: picturesToDelete.map((pic) => {
+                return path.basename(pic);
+            })});
+        });
+    });
+}
