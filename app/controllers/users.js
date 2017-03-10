@@ -14,7 +14,7 @@ exports.getUsers = function(req, res) {
 exports.getUserByName = function(req, res) {
     var name = req.params.name;
 
-    User.findOne({name: new RegExp('^'+name+'$', "i")}, function(err, user) {
+    User.findOne({name: new RegExp('^'+name+'', "i")}, function(err, user) {
         if (err) {
             res.status(400).send( { errorMessage: 'Error gathering users by name.', errors: err });
             return;
