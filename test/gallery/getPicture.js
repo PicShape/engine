@@ -9,6 +9,7 @@ let chai = require('chai');
 let chaiFs = require('chai-fs');
 let chaiHttp = require('chai-http');
 let server = require('../../server');
+var rimraf = require('rimraf');
 let should = chai.should();
 
 chai.use(chaiHttp);
@@ -22,13 +23,15 @@ describe('/GET app/api/gallery/photos/:id', () => {
       var uploadDir = __dirname + '/../../app/uploads';
       uploadDir = path.resolve(uploadDir);
       // We check if uploads directiry exists. If not, we create it
-      if (!fs.existsSync(uploadDir)){
-          console.log('Creating',uploadDir);
+      if(!fs.existsSync(uploadDir)) {
+          console.log('Creating', uploadDir);
           fs.mkdirSync(uploadDir);
       }
 
+
       var test = __dirname + '/test.jpg';
       test = path.resolve(test);
+      console.log(test);
       var newDestination = uploadDir + '/test.jpg';
       newDestination = path.resolve(newDestination);
 
@@ -38,14 +41,17 @@ describe('/GET app/api/gallery/photos/:id', () => {
       inStr.pipe(outStr);
 
       chai.expect(newDestination).to.be.a.file();
+      console.log(newDestination);
 
       chai.request(server)
           .get('/api/gallery/photos/test')
           .end((err, res) => {
               res.should.have.status(200);
-          });
+              fs.unlink(newDestination);
 
-        fs.unlink(newDestination);
-        done();
+              rimraf(uploadDir, function () {
+                done();
+              });
+          });
     });
 });
