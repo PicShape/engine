@@ -16,8 +16,6 @@ chai.use(chaiHttp);
 
 dotenv.load();
 
-
-
 describe('Account management', function() {
 
 
