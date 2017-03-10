@@ -20,7 +20,7 @@ function getPictureById(id, user, cb) {
 
     async.detect([pngFile,jpgFile,svgFile], function(filePath, callback) {
         fs.access(filePath, function(err) {
-            callback(null, !err)
+            callback(null, !err);
         });
     }, cb);
 }
@@ -102,7 +102,6 @@ exports.deletePicture = function(req, res) {
 
         var picturesToDelete = [
             path.join(pathToUserBaseDirectory, file),
-            // path.join(pathToUserBaseDirectory,'thumbnail-' + file), TODO: no thumbnail ATM.
             path.join(pathToUserBaseDirectory,'converted-' + file)
         ];
 
@@ -120,4 +119,4 @@ exports.deletePicture = function(req, res) {
             })});
         });
     });
-}
+};
