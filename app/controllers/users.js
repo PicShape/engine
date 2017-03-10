@@ -16,6 +16,12 @@ exports.getUsers = function(req, res) {
     });
 };
 
+/**
+ * Retrieves all user starting by 'name' (case insensitive)
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
 exports.getUserByName = function(req, res) {
     var name = req.params.name;
 
@@ -30,6 +36,9 @@ exports.getUserByName = function(req, res) {
     });
 };
 
+/**
+ * Retrieves user with given ID
+ */
 exports.getUserById = function(req, res) {
     var id = req.params.id;
 
