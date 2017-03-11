@@ -21,12 +21,12 @@ exports.getUserByName = function(req, res) {
 
     User.find({name: new RegExp('^'+name+'', "i")})
     .sort({name: 1})
-    .exec(function(err, user) {
+    .exec(function(err, users) {
         if (err) {
             res.status(400).send( { errorMessage: 'Error gathering users by name.', errors: err });
             return;
         }
-        res.send({user: user});
+        res.send({users: users});
     });
 };
 
