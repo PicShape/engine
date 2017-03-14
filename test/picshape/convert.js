@@ -64,7 +64,7 @@ describe('/POST picshape/convert', function(){
           .end(function(err, res) {
               res.should.have.status(200);
 
-              // We remove the acccount because we don't need it anymore
+              // We remove the account because we don't need it anymore
               chai.request(server)
                   .delete('/api/account')
                   .set('Content-Type', 'application/x-www-form-urlencoded')

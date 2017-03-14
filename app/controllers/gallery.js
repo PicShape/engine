@@ -65,11 +65,20 @@ exports.getPictures = function(req, res) {
     }, function(er, files) {
         async.map(files, function(file, cb) {
             var APILink = 'http://' + req.headers.host + photosAPIPath + user + '/';
-            console.log(file);
-            cb(null, {
-                photo: APILink + file,
-                thumbnail: APILink + 'thumbnail-' + file,
-                converted: APILink + 'converted-' + file
+            // Using fs.stat to retrieve timestamp
+            fs.stat(uploadPath + file, (err, stats) => {
+                if(err) {
+                    return cb(err, null);
+                }
+                cb(null, {
+                    photo: APILink + file,
+                    //thumbnail: APILink + 'thumbnail-' + file,
+                    thumbnail: APILink + file,
+                    converted: APILink + 'converted-' + file,
+                    timestamp: stats.birthtime.getTime(),
+                    user: user,
+
+                });
             });
         }, function(err, results) {
             console.log(results);
