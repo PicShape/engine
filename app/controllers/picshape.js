@@ -7,22 +7,27 @@ var validationSchemas = require('./validationSchemas');
 
 var photosPath = '/api/gallery/photos/';
 
-
+/**
+ * Middleware called when a request is submitted. Can be used for debugging.
+ */
 exports.middlewareFileUpload = function(req, res, next) {
     next();
 };
 
+/**
+ * Controller receiving an image and starting conversion thanks to 'primitive-wrapper'
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
 exports.convert = function(req, res){
     console.log(req.user);
-    var uploadDir = __dirname + '/../uploads/' + req.user.name + '/';
+    var uploadDir = path.join(__dirname, '/../uploads/', req.user.name, '/');
     const DEFAULT_ITER_AMOUNT = 100;
     const DEFAULT_MODE = 0;
     const DEFAULT_FORMAT = 'png';
 
-    if(req.file === undefined) {
-        res.status(400).send({ errorMessage : 'You need to provide an input picture.' });
-        return;
-    }
+
 
     req.check(validationSchemas.convertSchema);
 

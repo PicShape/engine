@@ -5,8 +5,14 @@ var async = require('async');
 
 var photosAPIPath = '/api/gallery/photos/';
 
-// Utility function to check and returns file if it exists.
-// Use with function(err, result) where results is 'undefined' if 0 file found.
+/**
+ * Utility function to check and returns file if it exists with given 'id'.
+ * Use with function(err, result) where results is 'undefined' if 0 file found.
+ * @param  {[type]}   id   id of the photo to be retrieved
+ * @param  {[type]}   user  User owner of the photo
+ * @param  {Function} cb   Callback to give the resulted path
+ * @return {[type]}        [description]
+ */
 function getPictureById(id, user, cb) {
     var uploadPath = path.join(__dirname, '/../uploads/', user, '/');
 
@@ -25,13 +31,10 @@ function getPictureById(id, user, cb) {
     }, cb);
 }
 
-exports.middlewareFileUpload = function(req, res, next) {
-    console.log('File uploaded');
-    console.log(req.file);
-    next(req, res);
-};
 
-
+/**
+ * Controller retrieving a picture given an id and an user.
+ */
 exports.getPicture = function(req, res) {
     var id = req.params.id;
     var user = req.params.user;
@@ -46,6 +49,12 @@ exports.getPicture = function(req, res) {
     });
 };
 
+/**
+ * Retrieve all pictures associed with an user. Returns an array of objects
+ * containing the multiples files associated with an id.
+ * @param  {[type]} req Request containing user
+ * @return {[type]}     [description]
+ */
 exports.getPictures = function(req, res) {
     var id = req.params.id;
     var user = req.params.user;
@@ -56,11 +65,20 @@ exports.getPictures = function(req, res) {
     }, function(er, files) {
         async.map(files, function(file, cb) {
             var APILink = 'http://' + req.headers.host + photosAPIPath + user + '/';
-            console.log(file);
-            cb(null, {
-                photo: APILink + file,
-                thumbnail: APILink + 'thumbnail-' + file,
-                converted: APILink + 'converted-' + file
+            // Using fs.stat to retrieve timestamp
+            fs.stat(uploadPath + file, (err, stats) => {
+                if(err) {
+                    return cb(err, null);
+                }
+                cb(null, {
+                    photo: APILink + file,
+                    //thumbnail: APILink + 'thumbnail-' + file,
+                    thumbnail: APILink + file,
+                    converted: APILink + 'converted-' + file,
+                    timestamp: stats.birthtime.getTime(),
+                    user: user,
+
+                });
             });
         }, function(err, results) {
             console.log(results);
@@ -77,6 +95,12 @@ exports.getPictures = function(req, res) {
 
 };
 
+/**
+ * Delete picture and all associated ones with a given id.
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
 exports.deletePicture = function(req, res) {
     var id = req.params.id;
     var user = req.params.user;
