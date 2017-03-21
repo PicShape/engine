@@ -5,7 +5,7 @@ var User = require('../models/User');
  * Retrieves all users
  */
 exports.getUsers = function(req, res) {
-    User.find({}, {id: 1, name: 1, email: 1})
+    User.find({}, {id: 1, name: 1, gravatar: 1})
     .sort({name: 1})
     .exec(function(err, users) {
         if (err) {
@@ -25,7 +25,7 @@ exports.getUsers = function(req, res) {
 exports.getUserByName = function(req, res) {
     var name = req.params.name;
 
-    User.find({name: new RegExp('^'+name+'', "i")})
+    User.find({name: new RegExp('^'+name+'', "i")},{id: 1, name: 1, gravatar: 1})
     .sort({name: 1})
     .exec(function(err, users) {
         if (err) {
@@ -42,7 +42,7 @@ exports.getUserByName = function(req, res) {
 exports.getUserById = function(req, res) {
     var id = req.params.id;
 
-    User.findById(id, function(err, user) {
+    User.findById(id,{id: 1, name: 1, gravatar: 1}, function(err, user) {
         if (err) {
             res.status(400).send( { errorMessage: 'Error gathering users by id.', errors: err });
             return;

@@ -1,6 +1,7 @@
 var path = require('path');
 var mime = require('mime');
 var express = require('express');
+var fs = require('fs');
 
 var primitive = require('../utils/primitive-wrapper.js').primitive;
 var validationSchemas = require('./validationSchemas');
@@ -21,7 +22,6 @@ exports.middlewareFileUpload = function(req, res, next) {
  * @return {[type]}     [description]
  */
 exports.convert = function(req, res){
-    console.log(req.user);
     var uploadDir = path.join(__dirname, '/../uploads/', req.user.name, '/');
     const DEFAULT_ITER_AMOUNT = 100;
     const DEFAULT_MODE = 0;
@@ -53,12 +53,26 @@ exports.convert = function(req, res){
     var inputPath = uploadDir + file.filename;
     var outputPath = uploadDir + 'converted-' + file.filename;
 
+    var photosAPIPath = '/api/gallery/photos/';
+    var APILink = 'http://' + req.headers.host + photosAPIPath + req.user.name + '/';
 
     primitive(inputPath,
         outputPath,
         config,
         (out) => {
-            res.json({ successMessage: 'Conversion done successfully.', url: 'http://' + req.headers.host + photosPath + req.user.name + '/converted-' + file.filename });
-        }
-    );
+            fs.stat(uploadDir + file.filename, (err, stats) => {
+                if(err) {
+                    return res.status(400).send({ errorMessage : 'Error retrieving information on uploaded file.', err: err });
+                }
+                res.json({
+                    successMessage: 'Conversion done successfully.',
+                    photo: APILink + file.filename,
+                    //thumbnail: APILink + 'thumbnail-' + file,
+                    thumbnail: APILink + file.filename,
+                    converted: APILink + 'converted-' + file.filename,
+                    timestamp: stats.birthtime.getTime(),
+                    user: req.user.name,
+                });
+            });
+        });
 };

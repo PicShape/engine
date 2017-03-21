@@ -75,6 +75,7 @@ exports.loginPost = function(req, res, next) {
 */
 exports.signupPost = function(req, res, next) {
     req.checkBody('name', 'Name cannot be blank').notEmpty();
+    req.checkBody('name','Name cannot contains special characters.').isAlphanumeric();
     req.checkBody('email', 'Email is not valid').isEmail();
     req.checkBody('email', 'Email cannot be blank').notEmpty();
     req.checkBody('password', 'Password must be at least 4 characters long').len(4);
