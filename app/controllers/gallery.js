@@ -20,11 +20,11 @@ function getPictureById(id, user, cb) {
     var flatFile = path.resolve(uploadPath + stripedId);
     var pngFile = path.resolve(flatFile + '.png');
     var jpgFile = path.resolve(flatFile + '.jpg');
+    var jpegFile = path.resolve(flatFile + '.jpeg');
     var svgFile = path.resolve(flatFile + '.svg');
 
 
-
-    async.detect([pngFile,jpgFile,svgFile], function(filePath, callback) {
+    async.detect([jpegFile,pngFile,jpgFile,svgFile], function(filePath, callback) {
         fs.access(filePath, function(err) {
             callback(null, !err);
         });
@@ -42,7 +42,7 @@ exports.getPicture = function(req, res) {
     getPictureById(id, user, function(err, result) {
         if(result === undefined){
             return res.status(400).send({
-                errorMessage: 'Image with id ' + id + ' not found.',
+                errorMessage: 'Image with id ' + id + ' not found.'
             });
         }
         res.sendFile(result);
